@@ -2,12 +2,13 @@
 #include <Adafruit_NeoPixel.h>
 
 #define GYRO_MAX_VAL 32750  // Massimo valore positivo letto dal giroscopio
-#define INCLINATION_TOLLERANCE 100  // Tolleranza inclinazione
+#define INCL_TOLL 100  // Tolleranza inclinazione
 
 const uint8_t MPU = 0x68; // I2C address of the MPU-6050
 const uint8_t PIN_STRISCIA = 4;   // Pin linea dati striscia
 const uint8_t N_LEDS = 4; // Numero leds
-__INT16_TYPE__ AcX, AcY, AcZ, Tmp, GyX, GyY, GyZ;
+__INT16_TYPE__ AcX, AcY, Tmp, GyX, GyY;
+bool Xflat, Yflat;
 
 Adafruit_NeoPixel striscia = Adafruit_NeoPixel(N_LEDS, PIN_STRISCIA, NEO_RGB);
 
@@ -31,14 +32,12 @@ void loop()
     Wire.beginTransmission(MPU);
     Wire.write(0x3B);  // starting with register 0x3B (ACCEL_XOUT_H)
     Wire.endTransmission();
-    Wire.requestFrom(MPU, 14); // request a total of 14 registers (7*2)
+    Wire.requestFrom(MPU, 10); // request a total of 14 registers (7*2)
     AcX = Wire.read() << 8 | Wire.read();
     AcY = Wire.read() << 8 | Wire.read();
-    AcZ = Wire.read() << 8 | Wire.read();
     Tmp = Wire.read() << 8 | Wire.read();
     GyX = Wire.read() << 8 | Wire.read();
     GyY = Wire.read() << 8 | Wire.read();
-    GyZ = Wire.read() << 8 | Wire.read();
 
     Serial.print("Accelerometer: ");
     Serial.print("X = "); Serial.print(AcX);
@@ -56,52 +55,91 @@ void loop()
     
     // TODO: num pixels solamente indicativi
     // La struttura è una bozza, da ottimizzare
-    if(GyX > INCLINATION_TOLLERANCE &&  GyY > INCLINATION_TOLLERANCE)   // Angolo 0 in alto
+
+    Xflat = (GyX < INCL_TOLL && GyX > (INCL_TOLL*-1));
+    Yflat = (GyY < INCL_TOLL && GyY > (INCL_TOLL*-1));
+    if(Xflat && Yflat) //in bolla
     {
-        striscia.setPixelColor(0, striscia.Color(0, (255*GYRO_MAX_VAL*2)/(GyX + GYRO_MAX_VAL), (255*GYRO_MAX_VAL*2)/(GyY + GYRO_MAX_VAL))); // g,r,b CONTROLLA SE è VERO
-    }
-    else if(GyX > INCLINATION_TOLLERANCE && GyY < INCLINATION_TOLLERANCE*(-1))  // Angolo 1 in alto
-    {
-        striscia.setPixelColor(1, striscia.Color(0, (255*GYRO_MAX_VAL*2)/(GyX + GYRO_MAX_VAL), (255*GYRO_MAX_VAL*2)/(GyY + GYRO_MAX_VAL)));
-    }
-    else if(GyX < INCLINATION_TOLLERANCE*(-1) && GyY > INCLINATION_TOLLERANCE)  // Angolo 2 in alto
-    {
-        striscia.setPixelColor(2, striscia.Color(0, (255*GYRO_MAX_VAL*2)/(GyX + GYRO_MAX_VAL), (255*GYRO_MAX_VAL*2)/(GyY + GYRO_MAX_VAL)));
-    }
-    else if(GyX < INCLINATION_TOLLERANCE*(-1) && GyY < INCLINATION_TOLLERANCE*(-1)) // Angolo 3 in alto
-    {
-        striscia.setPixelColor(3, striscia.Color(0, (255*GYRO_MAX_VAL*2)/(GyX + GYRO_MAX_VAL), (255*GYRO_MAX_VAL*2)/(GyY + GYRO_MAX_VAL)));
-    }
-    else if(GyX > INCLINATION_TOLLERANCE)   // Lato 01 in alto
-    {
-        striscia.setPixelColor(0, striscia.Color(0, (255*GYRO_MAX_VAL*2)/(GyX + GYRO_MAX_VAL), (255*GYRO_MAX_VAL*2)/(GyY + GYRO_MAX_VAL)));
-        striscia.setPixelColor(1, striscia.Color(0, (255*GYRO_MAX_VAL*2)/(GyX + GYRO_MAX_VAL), (255*GYRO_MAX_VAL*2)/(GyY + GYRO_MAX_VAL)));
-    }
-    else if(GyX < INCLINATION_TOLLERANCE*(-1))  // Lato 23 in alto
-    {
-        striscia.setPixelColor(2, striscia.Color(0, (255*GYRO_MAX_VAL*2)/(GyX + GYRO_MAX_VAL), (255*GYRO_MAX_VAL*2)/(GyY + GYRO_MAX_VAL)));
-        striscia.setPixelColor(3, striscia.Color(0, (255*GYRO_MAX_VAL*2)/(GyX + GYRO_MAX_VAL), (255*GYRO_MAX_VAL*2)/(GyY + GYRO_MAX_VAL)));
-    }
-    else if(GyY > INCLINATION_TOLLERANCE)   // Lato 02 in alto
-    {
-        striscia.setPixelColor(0, striscia.Color(0, (255*GYRO_MAX_VAL*2)/(GyX + GYRO_MAX_VAL), (255*GYRO_MAX_VAL*2)/(GyY + GYRO_MAX_VAL)));
-        striscia.setPixelColor(2, striscia.Color(0, (255*GYRO_MAX_VAL*2)/(GyX + GYRO_MAX_VAL), (255*GYRO_MAX_VAL*2)/(GyY + GYRO_MAX_VAL)));
-    }
-    else if(GyY < INCLINATION_TOLLERANCE*(-1))  // Lato 13 in alto
-    {
-        striscia.setPixelColor(1, striscia.Color(0, (255*GYRO_MAX_VAL*2)/(GyX + GYRO_MAX_VAL), (255*GYRO_MAX_VAL*2)/(GyY + GYRO_MAX_VAL)));
-        striscia.setPixelColor(3, striscia.Color(0, (255*GYRO_MAX_VAL*2)/(GyX + GYRO_MAX_VAL), (255*GYRO_MAX_VAL*2)/(GyY + GYRO_MAX_VAL)));
-    }
-    else    // Tutto in bolla
-    {
-        for(i=0; i < N_LEDS; i++)
+        for(int i = 0; i < 4; i++)
         {
-            striscia.setPixelColor(i, striscia.Color(0, 0, 0));
+            striscia.setPixelColor(i, striscia.color(255, 0, 0));
         }
     }
-
+    else //non in bolla
+    {
+        if(Xflat) //x in bolla
+        {
+            if(GyY >= INCL_TOLL) //y maggiore
+            {
+                striscia.setPixelColor(0, striscia.color(0, 0, 255));
+                striscia.setPixelColor(3, striscia.color(0, 0, 255));
+                striscia.setPixelColor(1, striscia.color(0, 255, 0));
+                striscia.setPixelColor(2, striscia.color(0, 255, 0));
+            }
+            else //y minore
+            {
+                striscia.setPixelColor(1, striscia.color(0, 0, 255));
+                striscia.setPixelColor(2, striscia.color(0, 0, 255));
+                striscia.setPixelColor(0, striscia.color(0, 255, 0));
+                striscia.setPixelColor(3, striscia.color(0, 255, 0));
+            }
+        }
+        else if(Yflat) //y in bolla
+        {
+            if(GyX >= INCL_TOLL) //x maggiore
+            {
+                striscia.setPixelColor(2, striscia.color(0, 0, 255));
+                striscia.setPixelColor(3, striscia.color(0, 0, 255));
+                striscia.setPixelColor(0, striscia.color(0, 255, 0));
+                striscia.setPixelColor(1, striscia.color(0, 255, 0));
+            }
+            else //x minore
+            {
+                striscia.setPixelColor(2, striscia.color(0, 0, 255));
+                striscia.setPixelColor(3, striscia.color(0, 0, 255));
+                striscia.setPixelColor(0, striscia.color(0, 255, 0));
+                striscia.setPixelColor(1, striscia.color(0, 255, 0));
+            }
+        }
+        else
+        {
+            if(GyX >= INCL_TOLL) //x maggiore
+            {
+                if(GyY >= INCL_TOLL) //y maggiore
+                {
+                    striscia.setPixelColor(0, striscia.color(255, 0, 0));
+                    striscia.setPixelColor(1, striscia.color(0, 255, 0));
+                    striscia.setPixelColor(2, striscia.color(255, 0, 0));
+                    striscia.setPixelColor(3, striscia.color(0, 0, 255));
+                }
+                else //y minore
+                {
+                    striscia.setPixelColor(0, striscia.color(0, 255, 0));
+                    striscia.setPixelColor(1, striscia.color(255, 0, 0));
+                    striscia.setPixelColor(2, striscia.color(0, 0, 255));
+                    striscia.setPixelColor(3, striscia.color(255, 0, 0));
+                }
+            }
+            else //x minore
+            {
+                if(GyY >= INCL_TOLL) //y maggiore
+                {
+                    striscia.setPixelColor(0, striscia.color(0, 0, 255));
+                    striscia.setPixelColor(1, striscia.color(255, 0, 0));
+                    striscia.setPixelColor(2, striscia.color(0, 255, 0));
+                    striscia.setPixelColor(3, striscia.color(255, 0, 0));
+                }
+                else //y minore
+                {
+                    striscia.setPixelColor(0, striscia.color(0, 0, 255));
+                    striscia.setPixelColor(1, striscia.color(255, 0, 0));
+                    striscia.setPixelColor(2, striscia.color(255, 0, 0));
+                    striscia.setPixelColor(3, striscia.color(0, 255, 0));
+                }
+            }
+        }
+    }
 
     striscia.show();
     delay(350);
 }
-
