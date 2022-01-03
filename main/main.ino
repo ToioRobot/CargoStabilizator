@@ -42,7 +42,6 @@ void loop()
     Serial.print("Accelerometer: ");
     Serial.print("X = "); Serial.print(AcX);
     Serial.print(" | Y = "); Serial.print(AcY);
-    Serial.print(" | Z = "); Serial.println(AcZ);
     
     //equation for temperature in degrees C from datasheet
     Serial.print("Temperature: "); Serial.print(Tmp / 340.00 + 36.53); Serial.println(" C ");
@@ -50,7 +49,6 @@ void loop()
     Serial.print("Gyroscope: ");
     Serial.print("X = "); Serial.print(GyX);
     Serial.print(" | Y = "); Serial.print(GyY);
-    Serial.print(" | Z = "); Serial.println(GyZ);
     Serial.println(" ");
     
     // TODO: num pixels solamente indicativi
@@ -62,7 +60,7 @@ void loop()
     {
         for(int i = 0; i < 4; i++)
         {
-            striscia.setPixelColor(i, striscia.color(255, 0, 0));
+            striscia.setPixelColor(i, striscia.Color(255, 0, 0));
         }
     }
     else //non in bolla
@@ -71,34 +69,34 @@ void loop()
         {
             if(GyY >= INCL_TOLL) //y maggiore
             {
-                striscia.setPixelColor(0, striscia.color(0, 0, 255));
-                striscia.setPixelColor(3, striscia.color(0, 0, 255));
-                striscia.setPixelColor(1, striscia.color(0, 255, 0));
-                striscia.setPixelColor(2, striscia.color(0, 255, 0));
+                striscia.setPixelColor(0, striscia.Color(0, 0, 255));
+                striscia.setPixelColor(3, striscia.Color(0, 0, 255));
+                striscia.setPixelColor(1, striscia.Color(0, 255, 0));
+                striscia.setPixelColor(2, striscia.Color(0, 255, 0));
             }
             else //y minore
             {
-                striscia.setPixelColor(1, striscia.color(0, 0, 255));
-                striscia.setPixelColor(2, striscia.color(0, 0, 255));
-                striscia.setPixelColor(0, striscia.color(0, 255, 0));
-                striscia.setPixelColor(3, striscia.color(0, 255, 0));
+                striscia.setPixelColor(1, striscia.Color(0, 0, 255));
+                striscia.setPixelColor(2, striscia.Color(0, 0, 255));
+                striscia.setPixelColor(0, striscia.Color(0, 255, 0));
+                striscia.setPixelColor(3, striscia.Color(0, 255, 0));
             }
         }
         else if(Yflat) //y in bolla
         {
             if(GyX >= INCL_TOLL) //x maggiore
             {
-                striscia.setPixelColor(2, striscia.color(0, 0, 255));
-                striscia.setPixelColor(3, striscia.color(0, 0, 255));
-                striscia.setPixelColor(0, striscia.color(0, 255, 0));
-                striscia.setPixelColor(1, striscia.color(0, 255, 0));
+                striscia.setPixelColor(2, striscia.Color(0, 0, 255));
+                striscia.setPixelColor(3, striscia.Color(0, 0, 255));
+                striscia.setPixelColor(0, striscia.Color(0, 255, 0));
+                striscia.setPixelColor(1, striscia.Color(0, 255, 0));
             }
             else //x minore
             {
-                striscia.setPixelColor(2, striscia.color(0, 0, 255));
-                striscia.setPixelColor(3, striscia.color(0, 0, 255));
-                striscia.setPixelColor(0, striscia.color(0, 255, 0));
-                striscia.setPixelColor(1, striscia.color(0, 255, 0));
+                striscia.setPixelColor(2, striscia.Color(0, 0, 255));
+                striscia.setPixelColor(3, striscia.Color(0, 0, 255));
+                striscia.setPixelColor(0, striscia.Color(0, 255, 0));
+                striscia.setPixelColor(1, striscia.Color(0, 255, 0));
             }
         }
         else
@@ -107,34 +105,34 @@ void loop()
             {
                 if(GyY >= INCL_TOLL) //y maggiore
                 {
-                    striscia.setPixelColor(0, striscia.color(255, 0, 0));
-                    striscia.setPixelColor(1, striscia.color(0, 255, 0));
-                    striscia.setPixelColor(2, striscia.color(255, 0, 0));
-                    striscia.setPixelColor(3, striscia.color(0, 0, 255));
+                    striscia.setPixelColor(0, striscia.Color(255, 0, 0));
+                    striscia.setPixelColor(1, striscia.Color(0, 255, 0));
+                    striscia.setPixelColor(2, striscia.Color(255, 0, 0));
+                    striscia.setPixelColor(3, striscia.Color(0, 0, 255));
                 }
                 else //y minore
                 {
-                    striscia.setPixelColor(0, striscia.color(0, 255, 0));
-                    striscia.setPixelColor(1, striscia.color(255, 0, 0));
-                    striscia.setPixelColor(2, striscia.color(0, 0, 255));
-                    striscia.setPixelColor(3, striscia.color(255, 0, 0));
+                    striscia.setPixelColor(0, striscia.Color(0, 255, 0));
+                    striscia.setPixelColor(1, striscia.Color(255, 0, 0));
+                    striscia.setPixelColor(2, striscia.Color(0, 0, 255));
+                    striscia.setPixelColor(3, striscia.Color(255, 0, 0));
                 }
             }
             else //x minore
             {
                 if(GyY >= INCL_TOLL) //y maggiore
                 {
-                    striscia.setPixelColor(0, striscia.color(0, 0, 255));
-                    striscia.setPixelColor(1, striscia.color(255, 0, 0));
-                    striscia.setPixelColor(2, striscia.color(0, 255, 0));
-                    striscia.setPixelColor(3, striscia.color(255, 0, 0));
+                    striscia.setPixelColor(0, striscia.Color(0, 0, 255));
+                    striscia.setPixelColor(1, striscia.Color(255, 0, 0));
+                    striscia.setPixelColor(2, striscia.Color(0, 255, 0));
+                    striscia.setPixelColor(3, striscia.Color(255, 0, 0));
                 }
                 else //y minore
                 {
-                    striscia.setPixelColor(0, striscia.color(0, 0, 255));
-                    striscia.setPixelColor(1, striscia.color(255, 0, 0));
-                    striscia.setPixelColor(2, striscia.color(255, 0, 0));
-                    striscia.setPixelColor(3, striscia.color(0, 255, 0));
+                    striscia.setPixelColor(0, striscia.Color(0, 0, 255));
+                    striscia.setPixelColor(1, striscia.Color(255, 0, 0));
+                    striscia.setPixelColor(2, striscia.Color(255, 0, 0));
+                    striscia.setPixelColor(3, striscia.Color(0, 255, 0));
                 }
             }
         }
