@@ -56,6 +56,7 @@ float angle_pitch_output, angle_roll_output;
 //Declaring Leds const
 const uint8_t PIN_STRISCIA = 9;   // Pin linea dati striscia
 const uint8_t N_LEDS = 4; // Numero leds
+const uint8_t PIN_FOTORES = A0; // Pin fotoresistore
 
 //Initialize the LCD library
 LiquidCrystal_I2C lcd(0x3F,16,2);
@@ -65,7 +66,7 @@ Adafruit_NeoPixel striscia = Adafruit_NeoPixel(N_LEDS, PIN_STRISCIA, NEO_RGB);
 
 void setup() {
   Wire.begin();                                                        //Start I2C as master
-  //Serial.begin(57600);                                               //Use only for debugging
+  //Serial.begin(9600);                                               //Use only for debugging
   pinMode(13, OUTPUT);                                                 //Set output 13 (LED) as output
   
   setup_mpu_6050_registers();                                          //Setup the registers of the MPU-6050 (500dfs / +/-8g) and start the gyro
@@ -113,11 +114,11 @@ void setup() {
   //Reset the loop timer
 
   striscia.begin();
-  striscia.setBrightness(69);
-  striscia.show();
 }
 
 void loop(){
+
+  striscia.setBrightness(analogRead(PIN_FOTORES)/4);
 
   read_mpu_6050_data();                                                //Read the raw acc and gyro data from the MPU-6050
 
