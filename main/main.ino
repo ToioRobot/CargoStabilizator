@@ -17,78 +17,73 @@ bool set_gyro_angles;
 Angle angleAcc;
 Angle angleOutput;
 
-//Declaring Leds const
-const uint8_t PIN_STRISCIA = 9;   // Pin linea dati striscia
-const uint8_t N_LEDS = 4; // Numero leds
-const uint8_t PIN_FOTORES = A0; // Pin fotoresistore
-
 //Initialize the LCD library
 LiquidCrystal_I2C lcd(0x3F,16,2);
 
 //Initialize the NeoPixel library
-Adafruit_NeoPixel striscia = Adafruit_NeoPixel(N_LEDS, PIN_STRISCIA, NEO_RGB);
+Adafruit_NeoPixel ledString = Adafruit_NeoPixel(N_LEDS, PIN_STRISCIA, NEO_RGB);
 
 void setup() {
-    Wire.begin();                                                        //Start I2C as master
-    //Serial.begin(9600);                                                //Use only for debugging
-    pinMode(13, OUTPUT);                                                 //Set output 13 (LED) as output
+    Wire.begin(); // Start I2C as master
+    //Serial.begin(9600); // Use only for debugging
+    pinMode(13, OUTPUT); // Set pin 13 (LED) as output
 
-    setup_mpu_6050_registers();                                          //Setup the registers of the MPU-6050 (500dfs / +/-8g) and start the gyro
+    setup_mpu_6050_registers(); // Setup the registers of the MPU-6050 (500dfs / +/-8g) and start the gyro
 
-    digitalWrite(13, HIGH);                                               //Set digital output 13 high to indicate startup
+    digitalWrite(13, HIGH); // Set digital output 13 high to indicate startup
 
-    lcd.init();                                                           //Initialize the LCD
-    lcd.backlight();                                                      //Activate backlight
-    lcd.clear();                                                          //Clear the LCD
+    lcd.init(); // Initialize the LCD
+    lcd.backlight(); // Activate backlight
+    lcd.clear(); // Clear the LCD
 
-    lcd.setCursor(0,0);                                                  //Set the LCD cursor to position to position 0,0
-    lcd.print("  MPU-6050 IMU");                                         //Print text to screen
-    lcd.setCursor(0,1);                                                  //Set the LCD cursor to position to position 0,1
-    lcd.print("     V1.1");                                              //Print text to screen
+    lcd.setCursor(0,0); // Set the LCD cursor to position to position 0,0
+    lcd.print("  MPU-6050 IMU"); // Print text to screen
+    lcd.setCursor(0,1); // Set the LCD cursor to position to position 0,1
+    lcd.print("     V1.2"); // Print text to screen
 
-    delay(1500);                                                         //Delay 1.5 second to display the text
-    lcd.clear();                                                         //Clear the LCD
+    delay(1500); // Delay 1.5 second to display the text
+    lcd.clear(); // Clear the LCD
 
-    lcd.setCursor(0,0);                                                  //Set the LCD cursor to position to position 0,0
-    lcd.print("Calibrating gyro");                                       //Print text to screen
-    lcd.setCursor(0,1);                                                  //Set the LCD cursor to position to position 0,1
-    for (int cal_int = 0; cal_int < 2000 ; cal_int++) {                  //Run this code 2000 times
-        if(cal_int % 125 == 0) {
+    lcd.setCursor(0,0); // Set the LCD cursor to position to position 0,0
+    lcd.print("Calibrating gyro"); // Print text to screen
+    lcd.setCursor(0,1); // Set the LCD cursor to position to position 0,1
+    for (int cal_int = 0; cal_int < 2000 ; cal_int++) { // Run this code 2000 times
+        if(cal_int % 125 == 0) { // Print a dot on the LCD every 125 readings
             lcd.print(".");
-        }                              //Print a dot on the LCD every 125 readings
-        read_mpu_6050_data();                                              //Read the raw acc and gyro data from the MPU-6050
-        calibrationData.x += data.gyroX;                                              //Add the gyro x-axis offset to the gyro_x_cal variable
-        calibrationData.y += data.gyroY;                                              //Add the gyro y-axis offset to the gyro_y_cal variable
-        calibrationData.z += data.gyroZ;                                              //Add the gyro z-axis offset to the gyro_z_cal variable
-        delay(3);                                                          //Delay 3us to simulate the 250Hz program loop
+        }
+        read_mpu_6050_data(); // Read the raw acc and gyro data from the MPU-6050
+        calibrationData.x += data.gyroX; // Add the gyro x-axis offset to the gyro_x_cal variable
+        calibrationData.y += data.gyroY; // Add the gyro y-axis offset to the gyro_y_cal variable
+        calibrationData.z += data.gyroZ; // Add the gyro z-axis offset to the gyro_z_cal variable
+        delay(3); // Delay 3us to simulate the 250Hz program loop
     }
-    calibrationData.x /= 2000;                                                  //Divide the gyro_x_cal variable by 2000 to get the avarage offset
-    calibrationData.y /= 2000;                                                  //Divide the gyro_y_cal variable by 2000 to get the avarage offset
-    calibrationData.z /= 2000;                                                  //Divide the gyro_z_cal variable by 2000 to get the avarage offset
+    calibrationData.x /= 2000; // Divide the gyro_x_cal variable by 2000 to get the avarage offset
+    calibrationData.y /= 2000; // Divide the gyro_y_cal variable by 2000 to get the avarage offset
+    calibrationData.z /= 2000; // Divide the gyro_z_cal variable by 2000 to get the avarage offset
 
-    lcd.clear();                                                         //Clear the LCD
+    lcd.clear(); // Clear the LCD
 
-    lcd.setCursor(0,0);                                                  //Set the LCD cursor to position to position 0,0
-    lcd.print("Pitch:");                                                 //Print text to screen
-    lcd.setCursor(0,1);                                                  //Set the LCD cursor to position to position 0,1
-    lcd.print("Roll :");                                                 //Print text to screen
+    lcd.setCursor(0,0); // Set the LCD cursor to position to position 0,0
+    lcd.print("Pitch:"); // Print text to screen
+    lcd.setCursor(0,1); // Set the LCD cursor to position to position 0,1
+    lcd.print("Roll :"); // Print text to screen
 
-    digitalWrite(13, LOW);                                               //All done, turn the LED off
+    digitalWrite(13, LOW); // All done, turn the LED off
 
-    loop_timer = micros();                                                //Reset the loop timer
+    loop_timer = micros(); // Reset the loop timer
 
-    striscia.begin();
+    ledString.begin();
 }
 
 void loop(){
 
-    striscia.setBrightness(analogRead(PIN_FOTORES)/4);
+    ledString.setBrightness(analogRead(PIN_FOTORES)/4);
 
-    read_mpu_6050_data();                                                //Read the raw acc and gyro data from the MPU-6050
+    read_mpu_6050_data(); // Read the raw acc and gyro data from the MPU-6050
 
-    data.gyroX -= calibrationData.x;                                                //Subtract the offset calibration value from the raw gyro_x value
-    data.gyroY -= calibrationData.y;                                                //Subtract the offset calibration value from the raw gyro_y value
-    data.gyroZ -= calibrationData.z;                                                //Subtract the offset calibration value from the raw gyro_z value
+    data.gyroX -= calibrationData.x; // Subtract the offset calibration value from the raw gyro x value
+    data.gyroY -= calibrationData.y; // Subtract the offset calibration value from the raw gyro y value
+    data.gyroZ -= calibrationData.z; // Subtract the offset calibration value from the raw gyro z value
 
     //Gyro angle calculations
     //0.0000611 = 1 / (250Hz / 65.5)
@@ -143,7 +138,7 @@ void setLed(float GyX, float GyY) {
     {
         for(int i = 0; i < 4; i++)
         {
-            striscia.setPixelColor(i, striscia.Color(255, 0, 0));
+            ledString.setPixelColor(i, ledString.Color(255, 0, 0));
         }
     }
     else //non in bolla
@@ -152,34 +147,34 @@ void setLed(float GyX, float GyY) {
         {
             if(GyY >= INCL_TOLL) //y maggiore
             {
-                striscia.setPixelColor(0, striscia.Color(0, 255, 0));
-                striscia.setPixelColor(1, striscia.Color(0, 255, 0));
-                striscia.setPixelColor(2, striscia.Color(0, 0, 255));
-                striscia.setPixelColor(3, striscia.Color(0, 0, 255));
+                ledString.setPixelColor(0, ledString.Color(0, 255, 0));
+                ledString.setPixelColor(1, ledString.Color(0, 255, 0));
+                ledString.setPixelColor(2, ledString.Color(0, 0, 255));
+                ledString.setPixelColor(3, ledString.Color(0, 0, 255));
             }
             else //y minore
             {
-                striscia.setPixelColor(0, striscia.Color(0, 0, 255));
-                striscia.setPixelColor(1, striscia.Color(0, 0, 255));
-                striscia.setPixelColor(2, striscia.Color(0, 255, 0));
-                striscia.setPixelColor(3, striscia.Color(0, 255, 0));
+                ledString.setPixelColor(0, ledString.Color(0, 0, 255));
+                ledString.setPixelColor(1, ledString.Color(0, 0, 255));
+                ledString.setPixelColor(2, ledString.Color(0, 255, 0));
+                ledString.setPixelColor(3, ledString.Color(0, 255, 0));
             }
         }
         else if(Yflat) //y in bolla
         {
             if(GyX >= INCL_TOLL) //x maggiore
             {
-                striscia.setPixelColor(0, striscia.Color(0, 0, 255));
-                striscia.setPixelColor(1, striscia.Color(0, 255, 0));
-                striscia.setPixelColor(2, striscia.Color(0, 255, 0));
-                striscia.setPixelColor(3, striscia.Color(0, 0, 255));
+                ledString.setPixelColor(0, ledString.Color(0, 0, 255));
+                ledString.setPixelColor(1, ledString.Color(0, 255, 0));
+                ledString.setPixelColor(2, ledString.Color(0, 255, 0));
+                ledString.setPixelColor(3, ledString.Color(0, 0, 255));
             }
             else //x minore
             {
-                striscia.setPixelColor(0, striscia.Color(0, 255, 0));
-                striscia.setPixelColor(1, striscia.Color(0, 0, 255));
-                striscia.setPixelColor(2, striscia.Color(0, 0, 255));
-                striscia.setPixelColor(3, striscia.Color(0, 255, 0));
+                ledString.setPixelColor(0, ledString.Color(0, 255, 0));
+                ledString.setPixelColor(1, ledString.Color(0, 0, 255));
+                ledString.setPixelColor(2, ledString.Color(0, 0, 255));
+                ledString.setPixelColor(3, ledString.Color(0, 255, 0));
             }
         }
         else
@@ -188,40 +183,40 @@ void setLed(float GyX, float GyY) {
             {
                 if(GyY >= INCL_TOLL) //y maggiore
                 {
-                    striscia.setPixelColor(0, striscia.Color(255, 0, 0));
-                    striscia.setPixelColor(1, striscia.Color(0, 255, 0));
-                    striscia.setPixelColor(2, striscia.Color(255, 0, 0));
-                    striscia.setPixelColor(3, striscia.Color(0, 0, 255));
+                    ledString.setPixelColor(0, ledString.Color(255, 0, 0));
+                    ledString.setPixelColor(1, ledString.Color(0, 255, 0));
+                    ledString.setPixelColor(2, ledString.Color(255, 0, 0));
+                    ledString.setPixelColor(3, ledString.Color(0, 0, 255));
                 }
                 else //y minore
                 {
-                    striscia.setPixelColor(0, striscia.Color(0, 0, 255));
-                    striscia.setPixelColor(1, striscia.Color(255, 0, 0));
-                    striscia.setPixelColor(2, striscia.Color(0, 255, 0));
-                    striscia.setPixelColor(3, striscia.Color(255, 0, 0));
+                    ledString.setPixelColor(0, ledString.Color(0, 0, 255));
+                    ledString.setPixelColor(1, ledString.Color(255, 0, 0));
+                    ledString.setPixelColor(2, ledString.Color(0, 255, 0));
+                    ledString.setPixelColor(3, ledString.Color(255, 0, 0));
                 }
             }
             else //x minore
             {
                 if(GyY >= INCL_TOLL) //y maggiore
                 {
-                    striscia.setPixelColor(0, striscia.Color(0, 255, 0));
-                    striscia.setPixelColor(1, striscia.Color(255, 0, 0));
-                    striscia.setPixelColor(2, striscia.Color(0, 0, 255));
-                    striscia.setPixelColor(3, striscia.Color(255, 0, 0));
+                    ledString.setPixelColor(0, ledString.Color(0, 255, 0));
+                    ledString.setPixelColor(1, ledString.Color(255, 0, 0));
+                    ledString.setPixelColor(2, ledString.Color(0, 0, 255));
+                    ledString.setPixelColor(3, ledString.Color(255, 0, 0));
                 }
                 else //y minore
                 {
-                    striscia.setPixelColor(0, striscia.Color(255, 0, 0));
-                    striscia.setPixelColor(1, striscia.Color(0, 0, 255));
-                    striscia.setPixelColor(2, striscia.Color(255, 0, 0));
-                    striscia.setPixelColor(3, striscia.Color(0, 255, 0));
+                    ledString.setPixelColor(0, ledString.Color(255, 0, 0));
+                    ledString.setPixelColor(1, ledString.Color(0, 0, 255));
+                    ledString.setPixelColor(2, ledString.Color(255, 0, 0));
+                    ledString.setPixelColor(3, ledString.Color(0, 255, 0));
                 }
             }
         }
     }
 
-    striscia.show();
+    ledString.show();
 }
 
 void read_mpu_6050_data(){                                             //Subroutine for reading the raw gyro and accelerometer data
