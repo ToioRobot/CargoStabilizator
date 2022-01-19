@@ -212,3 +212,11 @@ void setLed(float GyX, float GyY) {
 
     ledString.show();
 }
+
+float getOffsetX(int angleX) {
+    return float(sin(double(angleX)) * (42.5 / 2));
+}
+
+float getOffsetY(int angleY) {
+    return float(sin(double(angleY)) * (85.5 / 2));
+}
