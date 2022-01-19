@@ -43,7 +43,8 @@ void setup() {
 
     delay(1500);
     lcd.clear();
-
+    
+    // Begin calibration
     lcd.setCursor(0,0);
     lcd.print("Calibrating gyro");
     lcd.setCursor(0,1);
@@ -62,6 +63,7 @@ void setup() {
     calibrationData.z /= 2000;
 
     lcd.clear();
+    // End calibration
 
     lcd.setCursor(0,0);
     lcd.print("Pitch:");
@@ -130,7 +132,7 @@ void setLed(float GyX, float GyY) {
     Yflat = (GyY < INCL_TOLL && GyY > (INCL_TOLL*-1));
     if(Xflat && Yflat) //in bolla
     {
-        for(int i = 0; i < 4; i++)
+        for(i = 0; i < 4; i++)
         {
             ledString.setPixelColor(i, ledString.Color(255, 0, 0));
         }
