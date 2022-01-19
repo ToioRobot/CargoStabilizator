@@ -1,4 +1,5 @@
 #include <Wire.h>
+#include <LiquidCrystal_I2C.h>
 
 struct GyroscopeData { // Data read from gyroscope
     short signed int gyroX;
