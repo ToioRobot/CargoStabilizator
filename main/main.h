@@ -31,35 +31,96 @@ const uint8_t PIN_FOTORES = A0; // Pin photoresistor
 
 GyroscopeData read_mpu_6050_data() { // Subroutine for reading the raw gyro and accelerometer data
     GyroscopeData data;
-    Wire.beginTransmission(0x68);                                        //Start communicating with the MPU-6050
-    Wire.write(0x3B);                                                    //Send the requested starting register
-    Wire.endTransmission();                                              //End the transmission
-    Wire.requestFrom(0x68,14);                                           //Request 14 bytes from the MPU-6050
-    while(Wire.available() < 14);                                        //Wait until all the bytes are received
-    data.accX = Wire.read()<<8|Wire.read();                                  //Add the low and high byte to the acc_x variable
-    data.accY = Wire.read()<<8|Wire.read();                                  //Add the low and high byte to the acc_y variable
-    data.accZ = Wire.read()<<8|Wire.read();                                  //Add the low and high byte to the acc_z variable
-    data.temp = Wire.read()<<8|Wire.read();                            //Add the low and high byte to the temperature variable
-    data.gyroX = Wire.read()<<8|Wire.read();                                 //Add the low and high byte to the gyro_x variable
-    data.gyroY = Wire.read()<<8|Wire.read();                                 //Add the low and high byte to the gyro_y variable
-    data.gyroZ = Wire.read()<<8|Wire.read();                                 //Add the low and high byte to the gyro_z variable
+    Wire.beginTransmission(0x68);
+    Wire.write(0x3B);
+    Wire.endTransmission();
+    Wire.requestFrom(0x68,14); // Request 14 bytes from the MPU-6050
+    while(Wire.available() < 14); // Wait until all the bytes are received
+    data.accX = Wire.read()<<8|Wire.read();
+    data.accY = Wire.read()<<8|Wire.read();
+    data.accZ = Wire.read()<<8|Wire.read();
+    data.temp = Wire.read()<<8|Wire.read();
+    data.gyroX = Wire.read()<<8|Wire.read();
+    data.gyroY = Wire.read()<<8|Wire.read();
+    data.gyroZ = Wire.read()<<8|Wire.read();
     return data;
 }
 
-void setup_mpu_6050_registers(){
-    //Activate the MPU-6050
-    Wire.beginTransmission(0x68);                                        //Start communicating with the MPU-6050
-    Wire.write(0x6B);                                                    //Send the requested starting register
-    Wire.write(0x00);                                                    //Set the requested starting register
-    Wire.endTransmission();                                              //End the transmission
-    //Configure the accelerometer (+/-8g)
-    Wire.beginTransmission(0x68);                                        //Start communicating with the MPU-6050
-    Wire.write(0x1C);                                                    //Send the requested starting register
-    Wire.write(0x10);                                                    //Set the requested starting register
-    Wire.endTransmission();                                              //End the transmission
-    //Configure the gyro (500dps full scale)
-    Wire.beginTransmission(0x68);                                        //Start communicating with the MPU-6050
-    Wire.write(0x1B);                                                    //Send the requested starting register
-    Wire.write(0x08);                                                    //Set the requested starting register
-    Wire.endTransmission();                                              //End the transmission
+void setup_mpu_6050_registers() {
+    Wire.beginTransmission(0x68);
+    Wire.write(0x6B);
+    Wire.write(0x00);
+    Wire.endTransmission();
+    Wire.beginTransmission(0x68);
+    Wire.write(0x1C);
+    Wire.write(0x10);
+    Wire.endTransmission();
+    Wire.beginTransmission(0x68);
+    Wire.write(0x1B);
+    Wire.write(0x08);
+    Wire.endTransmission();
+}
+
+void write_LCD(int *lcdLoopCounter, AngleBuffer *angleBuffer, Angle *angleOutput) { // Subroutine for writing the LCD
+    if(*lcdLoopCounter == 14) {
+        *lcdLoopCounter = 0;
+    }
+    *lcdLoopCounter++;
+    switch(*lcdLoopCounter) {
+        case 1:
+            angleBuffer->pitch = angleOutput->pitch * 10;
+            lcd.setCursor(6,0);
+            break;
+        case 2:
+            if(angleBuffer->pitch < 0) {
+                lcd.print("-");
+            }
+            else {
+                lcd.print("+");
+            }
+            break;
+        case 3:
+            lcd.print(abs(angleBuffer->pitch)/1000);
+            break;
+        case 4:
+            lcd.print((abs(angleBuffer->pitch)/100)%10);
+            break;
+        case 5:
+            lcd.print((abs(angleBuffer->pitch)/10)%10);
+            break;
+        case 6:
+            lcd.print(".");
+            break;
+        case 7:
+            lcd.print(abs(angleBuffer->pitch)%10);
+            break;
+        case 8:
+            angleBuffer->roll = angleOutput->roll * 10;
+            lcd.setCursor(6,1);
+            break;
+        case 9:
+            if(angleBuffer->roll < 0) {
+                lcd.print("-");
+            }
+            else {
+                lcd.print("+");
+            }
+            break;
+        case 10:
+            lcd.print(abs(angleBuffer->roll)/1000);
+            break;
+        case 11:
+            lcd.print((abs(angleBuffer->roll)/100)%10);
+            break;
+        case 12:
+            lcd.print((abs(angleBuffer->roll)/10)%10);
+            break;
+        case 13:
+            lcd.print(".");
+            break;
+        case 14:
+            lcd.print(abs(angleBuffer->roll)%10);
+            break;
+        default:
+    }
 }
