@@ -51,7 +51,7 @@ void setup() {
         if(cal_int % 125 == 0) { // Print a dot on the LCD every 125 readings
             lcd.print(".");
         }
-        read_mpu_6050_data(); // Read the raw acc and gyro data from the MPU-6050
+        data = read_mpu_6050_data(); // Read the raw acc and gyro data from the MPU-6050
         calibrationData.x += data.gyroX; // Add the gyro x-axis offset to the gyro_x_cal variable
         calibrationData.y += data.gyroY; // Add the gyro y-axis offset to the gyro_y_cal variable
         calibrationData.z += data.gyroZ; // Add the gyro z-axis offset to the gyro_z_cal variable
@@ -77,9 +77,9 @@ void setup() {
 
 void loop(){
 
-    ledString.setBrightness(analogRead(PIN_FOTORES)/4);
+    ledString.setBrightness(analogRead(PIN_FOTORES)/4); //Reading enviroinmental light 
 
-    read_mpu_6050_data(); // Read the raw acc and gyro data from the MPU-6050
+    data = read_mpu_6050_data(); // Read the raw acc and gyro data from the MPU-6050
 
     data.gyroX -= calibrationData.x; // Subtract the offset calibration value from the raw gyro x value
     data.gyroY -= calibrationData.y; // Subtract the offset calibration value from the raw gyro y value
@@ -87,18 +87,18 @@ void loop(){
 
     //Gyro angle calculations
     //0.0000611 = 1 / (250Hz / 65.5)
-    angle.pitch += data.gyroX * 0.0000611;                                   //Calculate the traveled pitch angle and add this to the angle.pitch variable
-    angle.roll += data.gyroY * 0.0000611;                                    //Calculate the traveled roll angle and add this to the angle.roll variable
+    angle.pitch += data.gyroX * 0.0000611; // Calculate the traveled pitch angle and add this to the angle.pitch variable
+    angle.roll += data.gyroY * 0.0000611; // Calculate the traveled roll angle and add this to the angle.roll variable
 
     //0.000001066 = 0.0000611 * (3.142(PI) / 180degr) The Arduino sin function is in radians
-    angle.pitch += angle.roll * sin(data.gyroZ * 0.000001066);               //If the IMU has yawed transfer the roll angle to the pitch angle
-    angle.roll -= angle.pitch * sin(data.gyroZ * 0.000001066);               //If the IMU has yawed transfer the pitch angle to the roll angle
+    angle.pitch += angle.roll * sin(data.gyroZ * 0.000001066);               // If the IMU has yawed transfer the roll angle to the pitch angle
+    angle.roll -= angle.pitch * sin(data.gyroZ * 0.000001066);               // If the IMU has yawed transfer the pitch angle to the roll angle
 
     //Accelerometer angle calculations
-    data.accTot = sqrt((data.accX*data.accX)+(data.accY*data.accY)+(data.accZ*data.accZ));  //Calculate the total accelerometer vector
+    data.accTot = sqrt((data.accX*data.accX)+(data.accY*data.accY)+(data.accZ*data.accZ));  // Calculate the total accelerometer vector
     //57.296 = 1 / (3.142 / 180) The Arduino asin function is in radians
-    angleAcc.pitch = asin((float)data.accY/data.accTot)* 57.296;       //Calculate the pitch angle
-    angleAcc.roll = asin((float)data.accX/data.accTot)* -57.296;       //Calculate the roll angle
+    angleAcc.pitch = asin((float)data.accY/data.accTot)* 57.296;       // Calculate the pitch angle
+    angleAcc.roll = asin((float)data.accX/data.accTot)* -57.296;       // Calculate the roll angle
 
     //Place the MPU-6050 spirit level and note the values in the following two lines for calibration
     angleAcc.pitch -= 0.0;                                              //Accelerometer calibration value for pitch
@@ -217,21 +217,6 @@ void setLed(float GyX, float GyY) {
     }
 
     ledString.show();
-}
-
-void read_mpu_6050_data(){                                             //Subroutine for reading the raw gyro and accelerometer data
-    Wire.beginTransmission(0x68);                                        //Start communicating with the MPU-6050
-    Wire.write(0x3B);                                                    //Send the requested starting register
-    Wire.endTransmission();                                              //End the transmission
-    Wire.requestFrom(0x68,14);                                           //Request 14 bytes from the MPU-6050
-    while(Wire.available() < 14);                                        //Wait until all the bytes are received
-    data.accX = Wire.read()<<8|Wire.read();                                  //Add the low and high byte to the acc_x variable
-    data.accY = Wire.read()<<8|Wire.read();                                  //Add the low and high byte to the acc_y variable
-    data.accZ = Wire.read()<<8|Wire.read();                                  //Add the low and high byte to the acc_z variable
-    data.temp = Wire.read()<<8|Wire.read();                            //Add the low and high byte to the temperature variable
-    data.gyroX = Wire.read()<<8|Wire.read();                                 //Add the low and high byte to the gyro_x variable
-    data.gyroY = Wire.read()<<8|Wire.read();                                 //Add the low and high byte to the gyro_y variable
-    data.gyroZ = Wire.read()<<8|Wire.read();                                 //Add the low and high byte to the gyro_z variable
 }
 
 void write_LCD(){                                                      //Subroutine for writing the LCD
