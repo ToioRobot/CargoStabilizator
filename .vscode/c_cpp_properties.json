@@ -17,7 +17,9 @@
                 "C:/Program Files (x86)/Arduino/hardware/arduino/avr/cores/arduino/**",
                 "C:/Program Files (x86)/Arduino/**",
                 "C:/Program Files (x86)/Arduino/hardware/arduino/avr/variants/standard/**",
-                "E:/Users/lorenzo.ianotto/Documents/Arduino/libraries/**"
+                "E:/Users/lorenzo.ianotto/Documents/Arduino/libraries/**",
+                "E:/Users/mattia.biral/Documents/Arduino/libraries/**",
+                "E:/Users/mattia.biral/Documents/Arduino/libraries/LiquidCrystal_I2C"
             ],
             "defines": [
                 "_DEBUG",
