@@ -1,6 +1,10 @@
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 
+
+//Initialize the LCD library
+LiquidCrystal_I2C lcd(0x3F,16,2);
+
 struct GyroscopeData { // Data read from gyroscope
     short signed int gyroX;
     short signed int gyroY;
@@ -62,7 +66,7 @@ void setup_mpu_6050_registers() {
     Wire.endTransmission();
 }
 
-void write_LCD(int *lcdLoopCounter, AngleBuffer *angleBuffer, Angle angleOutput, LiquidCrystal_I2C lcd) { // Subroutine for writing the LCD
+void write_LCD(int *lcdLoopCounter, AngleBuffer *angleBuffer, Angle angleOutput) { // Subroutine for writing the LCD
     if(*lcdLoopCounter == 14) {
         *lcdLoopCounter = 0;
     }
@@ -124,4 +128,13 @@ void write_LCD(int *lcdLoopCounter, AngleBuffer *angleBuffer, Angle angleOutput,
             break;
         default:
     }
+}
+
+
+float getOffsetX(int angleX) {
+    return float(sin(double(angleX)) * (42.5 / 2));
+}
+
+float getOffsetY(int angleY) {
+    return float(sin(double(angleY)) * (85.5 / 2));
 }
