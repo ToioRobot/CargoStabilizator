@@ -62,14 +62,14 @@ void setup_mpu_6050_registers() {
     Wire.endTransmission();
 }
 
-void write_LCD(int *lcdLoopCounter, AngleBuffer *angleBuffer, Angle *angleOutput) { // Subroutine for writing the LCD
+void write_LCD(int *lcdLoopCounter, AngleBuffer *angleBuffer, Angle angleOutput, LiquidCrystal_I2C lcd) { // Subroutine for writing the LCD
     if(*lcdLoopCounter == 14) {
         *lcdLoopCounter = 0;
     }
     *lcdLoopCounter++;
     switch(*lcdLoopCounter) {
         case 1:
-            angleBuffer->pitch = angleOutput->pitch * 10;
+            angleBuffer->pitch = angleOutput.pitch * 10;
             lcd.setCursor(6,0);
             break;
         case 2:
@@ -96,7 +96,7 @@ void write_LCD(int *lcdLoopCounter, AngleBuffer *angleBuffer, Angle *angleOutput
             lcd.print(abs(angleBuffer->pitch)%10);
             break;
         case 8:
-            angleBuffer->roll = angleOutput->roll * 10;
+            angleBuffer->roll = angleOutput.roll * 10;
             lcd.setCursor(6,1);
             break;
         case 9:

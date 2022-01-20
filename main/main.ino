@@ -114,7 +114,7 @@ void loop(){
     angleOutput.pitch = angleOutput.pitch * 0.9 + angle.pitch * 0.1; // Take 90% of the output pitch value and add 10% of the raw pitch value
     angleOutput.roll = angleOutput.roll * 0.9 + angle.roll * 0.1; // Take 90% of the output roll value and add 10% of the raw roll value
 
-    write_LCD(&lcdLoopCounter, &angleBuffer, &angleOutput); // Write the roll and pitch values to the LCD display
+    write_LCD(&lcdLoopCounter, &angleBuffer, angleOutput, lcd); // Write the roll and pitch values to the LCD display
 
     while(micros() - loopTimer < 4000); // Wait until the loopTimer reaches 4000us (250Hz) before starting the next loop
     loopTimer = micros(); // Reset the loop timer
