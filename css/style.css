@@ -1,0 +1,31 @@
+:root {
+    --color-1: rgb(32, 32, 32);
+    --color-2: rgb(67, 151, 179);
+}
+body {
+    background-color: var(--color-1);
+}
+.cs-title {
+    background-color:var(--color-2) !important;
+    color: ghostwhite !important;
+    text-decoration: none !important;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    text-shadow: gray !important;
+}
+.cs-body {
+    background-color: var(--color-1) !important;
+    color: rgb(235, 235, 235) !important;
+    line-height: 1.2;
+    text-align: left !important;
+    font-family: 'Dongle', sans-serif;
+    font-size: 200%;
+}
+.cs-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-1) !important;
+}
