@@ -4,7 +4,6 @@
 #include <Adafruit_NeoPixel.h>
 #include "main.h"
 
-//Some data types to help data managing with arduino
 
 //Declaring some global variables
 GyroscopeData data;
@@ -17,8 +16,6 @@ bool setGyroAngles;
 Angle angleAcc;
 Angle angleOutput;
 
-//Initialize the LCD library
-LiquidCrystal_I2C lcd(0x3F,16,2);
 
 //Initialize the NeoPixel library
 Adafruit_NeoPixel ledString = Adafruit_NeoPixel(N_LEDS, PIN_STRISCIA, NEO_RGB);
@@ -114,7 +111,7 @@ void loop(){
     angleOutput.pitch = angleOutput.pitch * 0.9 + angle.pitch * 0.1; // Take 90% of the output pitch value and add 10% of the raw pitch value
     angleOutput.roll = angleOutput.roll * 0.9 + angle.roll * 0.1; // Take 90% of the output roll value and add 10% of the raw roll value
 
-    write_LCD(&lcdLoopCounter, &angleBuffer, &angleOutput); // Write the roll and pitch values to the LCD display
+    write_LCD(&lcdLoopCounter, &angleBuffer, angleOutput); // Write the roll and pitch values to the LCD display
 
     while(micros() - loopTimer < 4000); // Wait until the loopTimer reaches 4000us (250Hz) before starting the next loop
     loopTimer = micros(); // Reset the loop timer
@@ -215,10 +212,3 @@ void setLed(float GyX, float GyY) {
     ledString.show();
 }
 
-float getOffsetX(int angleX) {
-    return float(sin(double(angleX)) * (42.5 / 2));
-}
-
-float getOffsetY(int angleY) {
-    return float(sin(double(angleY)) * (85.5 / 2));
-}
