@@ -126,7 +126,6 @@ void write_LCD(int *lcdLoopCounter, AngleBuffer *angleBuffer, Angle angleOutput)
         case 14:
             lcd.print(abs(angleBuffer->roll)%10);
             break;
-        default:
     }
 }
 
