@@ -42,3 +42,10 @@ body {
     padding-right: 100px;
     background-color: var(--color-1) !important;
 }
+
+a {
+    color: turquoise;
+}
+a:hover {
+    color: yellow;
+}
