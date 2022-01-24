@@ -9,10 +9,16 @@ body {
     background-color:var(--color-2) !important;
     color: ghostwhite !important;
     text-decoration: none !important;
-    align-items: center;
+    font-family: 'Dongle', sans-serif;
+    font-size: 150%;
+    
+    display: flex;
+    align-content: center;
+    flex-wrap: wrap;
     text-align: center;
-    justify-content: center;
-    text-shadow: gray !important;
+    justify-content: space-between;
+    flex-direction: row;
+    height: 100px;
 }
 .cs-body {
     background-color: var(--color-1) !important;
@@ -21,11 +27,18 @@ body {
     text-align: left !important;
     font-family: 'Dongle', sans-serif;
     font-size: 200%;
+
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    flex-direction: row;
 }
 .cs-container {
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
+    padding-left: 100px;
+    padding-right: 100px;
     background-color: var(--color-1) !important;
 }
