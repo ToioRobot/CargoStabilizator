@@ -18,7 +18,7 @@ Angle angleOutput;
 
 
 //Initialize the NeoPixel library
-Adafruit_NeoPixel ledString = Adafruit_NeoPixel(N_LEDS, PIN_STRISCIA, NEO_RGB);
+Adafruit_NeoPixel ledString = Adafruit_NeoPixel(N_LEDS, LED_STRING_PIN, NEO_RGB);
 
 void setup() {
     Wire.begin(); // Start I2C as master
@@ -76,7 +76,7 @@ void setup() {
 
 void loop(){
 
-    ledString.setBrightness(analogRead(PIN_FOTORES)/4); //Reading enviroinmental light 
+    ledString.setBrightness(analogRead(PHOTORESISTOR_PIN)/4); //Reading enviroinmental light 
 
     data = read_mpu_6050_data(); // Read the raw acc and gyro data from the MPU-6050
 

@@ -30,9 +30,9 @@ struct AngleBuffer { // Angle buffer
 };
 
 //Declaring Leds const
-const uint8_t PIN_STRISCIA = 9; // Pin led string
+const uint8_t LED_STRING_PIN = 9; // Pin led string
 const uint8_t N_LEDS = 4; // Led number
-const uint8_t PIN_FOTORES = A0; // Pin photoresistor
+const uint8_t PHOTORESISTOR_PIN = A0; // Pin photoresistor
 
 GyroscopeData read_mpu_6050_data() { // Subroutine for reading the raw gyro and accelerometer data
     GyroscopeData data;
