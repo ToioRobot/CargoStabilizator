@@ -20,7 +20,9 @@ struct AngleBuffer { // Angle buffer
     short signed int pitch, roll;
 };
 struct Settings {
-    short unsigned int ledStringPin, ledsNumber, photoresistorPin, buzzerPin, xInclinationTollerance, yInclinationTollerance;
+    short unsigned int ledStringPin, ledsNumber, photoresistorPin, buzzerPin;
+    short unsigned int xInclinationTollerance, yInclinationTollerance, propBrightness;
+    float pitchCorrection, rollCorrection;
 };
 
 Settings readSettings();
@@ -133,11 +135,13 @@ Settings readSettings() { // Reads the settings from various files in the SD car
     Settings settings;
     settings.ledStringPin = readDataFromSD("lpin.txt").toInt();
     settings.ledsNumber = readDataFromSD("ledn.txt").toInt();
-    settings.photoresistorPin = readDataFromSD("ppin.txt").toInt();
+    settings.photoresistorPin = readDataFromSD("ppin.txt").toInt() + A0;
     settings.buzzerPin = readDataFromSD("bpin.txt").toInt();
     settings.xInclinationTollerance = readDataFromSD("xint.txt").toInt();
     settings.yInclinationTollerance = readDataFromSD("yint.txt").toInt();
-    settings.photoresistorPin += A0;
+    settings.propBrightness = readDataFromSD("lbad.txt").toInt();
+    settings.pitchCorrection = readDataFromSD("acpi.txt").toFloat() / 10;
+    settings.rollCorrection = readDataFromSD("acro.txt").toFloat() / 10;
     return settings;
 }
 
