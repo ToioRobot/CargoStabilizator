@@ -1,9 +1,9 @@
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
-
+#include <SD.h>
 
 //Initialize the LCD library
-LiquidCrystal_I2C lcd(0x3F,16,2);
+LiquidCrystal_I2C lcd(0x3F, 16, 2);
 
 struct GyroscopeData { // Data read from gyroscope
     short signed int gyroX, gyroY, gyroZ;
@@ -19,11 +19,12 @@ struct Angle { // General angle
 struct AngleBuffer { // Angle buffer
     short signed int pitch, roll;
 };
+struct Settings {
+    short unsigned int ledStringPin, ledsNumber, photoresistorPin, buzzerPin, xInclinationTollerance, yInclinationTollerance;
+};
 
-//Declaring Leds const
-const uint8_t PIN_STRISCIA = 9; // Pin led string
-const uint8_t N_LEDS = 4; // Led number
-const uint8_t PIN_FOTORES = A0; // Pin photoresistor
+Settings readSettings();
+String readDataFromSD(String fileName);
 
 GyroscopeData read_mpu_6050_data() { // Subroutine for reading the raw gyro and accelerometer data
     GyroscopeData data;
@@ -120,11 +121,36 @@ void write_LCD(int *lcdLoopCounter, AngleBuffer *angleBuffer, Angle angleOutput)
     }
 }
 
-
 float getOffsetX(int angleX) {
     return float(sin(double(angleX)) * (42.5 / 2));
 }
 
 float getOffsetY(int angleY) {
     return float(sin(double(angleY)) * (85.5 / 2));
+}
+
+Settings readSettings() { // Reads the settings from various files in the SD card
+    Settings settings;
+    settings.ledStringPin = readDataFromSD("lpin.txt").toInt();
+    settings.ledsNumber = readDataFromSD("ledn.txt").toInt();
+    settings.photoresistorPin = readDataFromSD("ppin.txt").toInt();
+    settings.buzzerPin = readDataFromSD("bpin.txt").toInt();
+    settings.xInclinationTollerance = readDataFromSD("xint.txt").toInt();
+    settings.yInclinationTollerance = readDataFromSD("yint.txt").toInt();
+    settings.photoresistorPin += A0;
+    return settings;
+}
+
+String readDataFromSD(String fileName) { // Genaral function to read the content of a file
+    String data;
+    if(SD.begin(4)) {
+        File dataFile = SD.open(fileName, FILE_READ);
+        if(dataFile) {
+            while (dataFile.available()) {
+                data = data + char(dataFile.read());
+            }
+            dataFile.close();
+        }
+    }
+    return data;
 }

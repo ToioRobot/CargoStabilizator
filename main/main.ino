@@ -4,7 +4,6 @@
 #include <Adafruit_NeoPixel.h>
 #include "main.h"
 
-
 //Declaring some global variables
 GyroscopeData data;
 GyroscopeCalibration calibrationData;
@@ -15,16 +14,20 @@ AngleBuffer angleBuffer;
 bool setGyroAngles;
 Angle angleAcc;
 Angle angleOutput;
-
+Settings settings;
 
 //Initialize the NeoPixel library
-Adafruit_NeoPixel ledString = Adafruit_NeoPixel(N_LEDS, PIN_STRISCIA, NEO_RGB);
+Adafruit_NeoPixel ledString;
 
 void setup() {
     Wire.begin(); // Start I2C as master
+    Serial.begin(9600);
     //Serial.begin(9600); // Use only for debugging
     pinMode(13, OUTPUT);
-
+    settings = readSettings();
+    pinMode(settings.buzzerPin, OUTPUT);
+    settings.ledStringPin = 9; settings.ledsNumber = 1;
+    ledString = Adafruit_NeoPixel(settings.ledsNumber, settings.ledStringPin, NEO_RGB);
     setup_mpu_6050_registers(); // Setup the registers of the MPU-6050 and start the gyro
 
     digitalWrite(13, HIGH); // Set digital output 13 high to indicate startup
@@ -45,6 +48,16 @@ void setup() {
     lcd.setCursor(0,0);
     lcd.print("Calibrating gyro");
     lcd.setCursor(0,1);
+    tone(settings.buzzerPin, 1000);
+    delay(500);
+    noTone(settings.buzzerPin);
+    ledString.begin(); // Begin ledString.
+    ledString.setBrightness(analogRead(settings.photoresistorPin)/4); //Reading enviroinmental light
+    Serial.println(analogRead(settings.photoresistorPin)/4);
+    for(uint8_t i = 0; i < settings.ledsNumber; i++) {
+        ledString.setPixelColor(i, ledString.Color(255, 255, 255));
+    }
+    ledString.show();
     for (int cal_int = 0; cal_int < 2000 ; cal_int++) {
         if(cal_int % 125 == 0) { // Print a dot on the LCD every 125 readings
             lcd.print(".");
@@ -68,15 +81,15 @@ void setup() {
     lcd.print("Roll :");
 
     digitalWrite(13, LOW); // All done, turn the LED off
+    tone(settings.buzzerPin, 1000);
+    delay(500);
+    noTone(settings.buzzerPin);
 
     loopTimer = micros(); // Reset the loop timer
-
-    ledString.begin(); // Begin 
 }
 
 void loop(){
-
-    ledString.setBrightness(analogRead(PIN_FOTORES)/4); //Reading enviroinmental light 
+    ledString.setBrightness(analogRead(settings.photoresistorPin)/4); //Reading enviroinmental light
 
     data = read_mpu_6050_data(); // Read the raw acc and gyro data from the MPU-6050
 
@@ -119,33 +132,31 @@ void loop(){
     setLed(angleOutput.pitch, angleOutput.roll); // Set the led colors and show them
 }
 
-
 void setLed(float GyX, float GyY) {
     bool Xflat, Yflat;
-    const int INCL_TOLL = 3;
     uint8_t i;
     
-    Xflat = (GyX < INCL_TOLL && GyX > (INCL_TOLL*-1));
-    Yflat = (GyY < INCL_TOLL && GyY > (INCL_TOLL*-1));
-    if(Xflat && Yflat) //in bolla
+    Xflat = (GyX < settings.xInclinationTollerance && GyX > (settings.xInclinationTollerance*-1));
+    Yflat = (GyY < settings.yInclinationTollerance && GyY > (settings.yInclinationTollerance*-1));
+    if(Xflat && Yflat) //flat
     {
-        for(i = 0; i < 4; i++)
+        for(i = 0; i < settings.ledsNumber; i++)
         {
             ledString.setPixelColor(i, ledString.Color(255, 0, 0));
         }
     }
-    else //non in bolla
+    else //not flat
     {
-        if(Xflat) //x in bolla
+        if(Xflat) //x flat
         {
-            if(GyY >= INCL_TOLL) //y maggiore
+            if(GyY >= settings.yInclinationTollerance) //y too much
             {
                 ledString.setPixelColor(0, ledString.Color(0, 255, 0));
                 ledString.setPixelColor(1, ledString.Color(0, 255, 0));
                 ledString.setPixelColor(2, ledString.Color(0, 0, 255));
                 ledString.setPixelColor(3, ledString.Color(0, 0, 255));
             }
-            else //y minore
+            else //y too less
             {
                 ledString.setPixelColor(0, ledString.Color(0, 0, 255));
                 ledString.setPixelColor(1, ledString.Color(0, 0, 255));
@@ -153,16 +164,16 @@ void setLed(float GyX, float GyY) {
                 ledString.setPixelColor(3, ledString.Color(0, 255, 0));
             }
         }
-        else if(Yflat) //y in bolla
+        else if(Yflat) //y flat
         {
-            if(GyX >= INCL_TOLL) //x maggiore
+            if(GyX >= settings.xInclinationTollerance) //x too much
             {
                 ledString.setPixelColor(0, ledString.Color(0, 0, 255));
                 ledString.setPixelColor(1, ledString.Color(0, 255, 0));
                 ledString.setPixelColor(2, ledString.Color(0, 255, 0));
                 ledString.setPixelColor(3, ledString.Color(0, 0, 255));
             }
-            else //x minore
+            else //x too less
             {
                 ledString.setPixelColor(0, ledString.Color(0, 255, 0));
                 ledString.setPixelColor(1, ledString.Color(0, 0, 255));
@@ -172,16 +183,16 @@ void setLed(float GyX, float GyY) {
         }
         else
         {
-            if(GyX >= INCL_TOLL) //x maggiore
+            if(GyX >= settings.xInclinationTollerance) //x too much
             {
-                if(GyY >= INCL_TOLL) //y maggiore
+                if(GyY >= settings.yInclinationTollerance) //y too much
                 {
                     ledString.setPixelColor(0, ledString.Color(255, 0, 0));
                     ledString.setPixelColor(1, ledString.Color(0, 255, 0));
                     ledString.setPixelColor(2, ledString.Color(255, 0, 0));
                     ledString.setPixelColor(3, ledString.Color(0, 0, 255));
                 }
-                else //y minore
+                else //y too less
                 {
                     ledString.setPixelColor(0, ledString.Color(0, 0, 255));
                     ledString.setPixelColor(1, ledString.Color(255, 0, 0));
@@ -189,16 +200,16 @@ void setLed(float GyX, float GyY) {
                     ledString.setPixelColor(3, ledString.Color(255, 0, 0));
                 }
             }
-            else //x minore
+            else //x too less
             {
-                if(GyY >= INCL_TOLL) //y maggiore
+                if(GyY >= settings.yInclinationTollerance) //y too much
                 {
                     ledString.setPixelColor(0, ledString.Color(0, 255, 0));
                     ledString.setPixelColor(1, ledString.Color(255, 0, 0));
                     ledString.setPixelColor(2, ledString.Color(0, 0, 255));
                     ledString.setPixelColor(3, ledString.Color(255, 0, 0));
                 }
-                else //y minore
+                else //y too less
                 {
                     ledString.setPixelColor(0, ledString.Color(255, 0, 0));
                     ledString.setPixelColor(1, ledString.Color(0, 0, 255));
