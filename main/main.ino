@@ -24,14 +24,9 @@ void setup() {
     Serial.begin(9600);
     //Serial.begin(9600); // Use only for debugging
     pinMode(13, OUTPUT);
-
     settings = readSettings();
-    Serial.println(settings.ledsNumber);
-    Serial.println(settings.ledStringPin);
-    Serial.println(settings.photoresistorPin);
-    Serial.println(settings.buzzerPin);
-    Serial.println(settings.xInclinationTollerance);
-    Serial.println(settings.yInclinationTollerance);
+    pinMode(settings.buzzerPin, OUTPUT);
+    settings.ledStringPin = 9; settings.ledsNumber = 1;
     ledString = Adafruit_NeoPixel(settings.ledsNumber, settings.ledStringPin, NEO_RGB);
     setup_mpu_6050_registers(); // Setup the registers of the MPU-6050 and start the gyro
 
@@ -53,9 +48,13 @@ void setup() {
     lcd.setCursor(0,0);
     lcd.print("Calibrating gyro");
     lcd.setCursor(0,1);
+    tone(settings.buzzerPin, 1000);
+    delay(500);
+    noTone(settings.buzzerPin);
     ledString.begin(); // Begin ledString.
     ledString.setBrightness(analogRead(settings.photoresistorPin)/4); //Reading enviroinmental light
-    for(int i = 0; i < settings.ledsNumber; i++) {
+    Serial.println(analogRead(settings.photoresistorPin)/4);
+    for(uint8_t i = 0; i < settings.ledsNumber; i++) {
         ledString.setPixelColor(i, ledString.Color(255, 255, 255));
     }
     ledString.show();
@@ -82,6 +81,9 @@ void setup() {
     lcd.print("Roll :");
 
     digitalWrite(13, LOW); // All done, turn the LED off
+    tone(settings.buzzerPin, 1000);
+    delay(500);
+    noTone(settings.buzzerPin);
 
     loopTimer = micros(); // Reset the loop timer
 }
