@@ -53,6 +53,12 @@ void setup() {
     lcd.setCursor(0,0);
     lcd.print("Calibrating gyro");
     lcd.setCursor(0,1);
+    ledString.begin(); // Begin ledString.
+    ledString.setBrightness(analogRead(settings.photoresistorPin)/4); //Reading enviroinmental light
+    for(int i = 0; i < settings.ledsNumber; i++) {
+        ledString.setPixelColor(i, ledString.Color(255, 255, 255));
+    }
+    ledString.show();
     for (int cal_int = 0; cal_int < 2000 ; cal_int++) {
         if(cal_int % 125 == 0) { // Print a dot on the LCD every 125 readings
             lcd.print(".");
@@ -78,13 +84,10 @@ void setup() {
     digitalWrite(13, LOW); // All done, turn the LED off
 
     loopTimer = micros(); // Reset the loop timer
-
-    ledString.begin(); // Begin 
 }
 
 void loop(){
-
-    ledString.setBrightness(analogRead(settings.photoresistorPin)/4); //Reading enviroinmental light 
+    ledString.setBrightness(analogRead(settings.photoresistorPin)/4); //Reading enviroinmental light
 
     data = read_mpu_6050_data(); // Read the raw acc and gyro data from the MPU-6050
 
@@ -136,7 +139,7 @@ void setLed(float GyX, float GyY) {
     Yflat = (GyY < settings.yInclinationTollerance && GyY > (settings.yInclinationTollerance*-1));
     if(Xflat && Yflat) //flat
     {
-        for(i = 0; i < 4; i++)
+        for(i = 0; i < settings.ledsNumber; i++)
         {
             ledString.setPixelColor(i, ledString.Color(255, 0, 0));
         }

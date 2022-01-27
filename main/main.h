@@ -138,7 +138,7 @@ float getOffsetY(int angleY) {
     return float(sin(double(angleY)) * (85.5 / 2));
 }
 
-Settings readSettings() {
+Settings readSettings() { // Reads the settings from various files in the SD card
     Settings settings;
     settings.ledStringPin = readDataFromSD("lpin.txt").toInt();
     settings.ledsNumber = readDataFromSD("ledn.txt").toInt();
@@ -146,18 +146,11 @@ Settings readSettings() {
     settings.buzzerPin = readDataFromSD("bpin.txt").toInt();
     settings.xInclinationTollerance = readDataFromSD("xint.txt").toInt();
     settings.yInclinationTollerance = readDataFromSD("yint.txt").toInt();
-    switch(settings.photoresistorPin) {
-        case 0: settings.photoresistorPin = A0; break;
-        case 1: settings.photoresistorPin = A1; break;
-        case 2: settings.photoresistorPin = A2; break;
-        case 3: settings.photoresistorPin = A3; break;
-        case 4: settings.photoresistorPin = A4; break;
-        case 5: settings.photoresistorPin = A5;
-    }
+    settings.photoresistorPin += A0;
     return settings;
 }
 
-String readDataFromSD(String fileName) {
+String readDataFromSD(String fileName) { // Genaral function to read the content of a file
     String data;
     if(SD.begin(4)) {
         File dataFile = SD.open(fileName, FILE_READ);

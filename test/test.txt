@@ -1,0 +1,11 @@
+fase di sviluppo lcd
+comunicazione seriale con il giroscopio
+comunicazione con i led
+fase di avvio:
+	lettura delle impostazioni
+	calibrazione giroscopio
+loop:
+	impostazione della luminosità
+	lettura dei dati dal giroscopio
+	calcolo delle inclinazioni
+	accensione dei led
