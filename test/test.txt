@@ -1,11 +1,12 @@
-fase di sviluppo lcd
 comunicazione seriale con il giroscopio
 comunicazione con i led
+fase di sviluppo lcd
+configurazione delle impostazioni da un operatore, a scheda spenta, prima dell'utilizzo
 fase di avvio:
 	lettura delle impostazioni
-	calibrazione giroscopio
+	calibrazione giroscopio, durante la quale i led sono colorati di bianco
 loop:
-	impostazione della luminosità
 	lettura dei dati dal giroscopio
 	calcolo delle inclinazioni
 	accensione dei led
+	regolazione dinamica della luminosità

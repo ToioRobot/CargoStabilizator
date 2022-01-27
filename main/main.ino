@@ -130,7 +130,6 @@ void loop(){
     setLed(angleOutput.pitch, angleOutput.roll); // Set the led colors and show them
 }
 
-
 void setLed(float GyX, float GyY) {
     bool Xflat, Yflat;
     uint8_t i;
