@@ -43,7 +43,7 @@ GyroscopeData read_mpu_6050_data() { // Subroutine for reading the raw gyro and 
     return data;
 }
 
-void setup_mpu_6050_registers() {
+void setup_mpu_6050_registers() { // Function to correctly initialize the gyroscope
     Wire.beginTransmission(0x68);
     Wire.write(0x6B);
     Wire.write(0x00);

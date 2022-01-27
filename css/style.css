@@ -109,6 +109,17 @@ img {
     color: var(--color-4);
 }
 
+.table {
+    font-size: 40px;
+    line-height: 35px;
+    color: var(--color-4);
+    font-family: 'Dongle', sans-serif;
+    font-size: 200%;
+    margin-left: 100px;
+    margin-right: 100px;
+    margin-top: 20px;
+}
+
 @media screen and (min-width: 1210px) {
     .box {
         width: 40vw;
