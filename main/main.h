@@ -6,27 +6,18 @@
 LiquidCrystal_I2C lcd(0x3F,16,2);
 
 struct GyroscopeData { // Data read from gyroscope
-    short signed int gyroX;
-    short signed int gyroY;
-    short signed int gyroZ;
-    long signed int accX;
-    long signed int accY;
-    long signed int accZ;
-    long signed int accTot;
+    short signed int gyroX, gyroY, gyroZ;
+    long signed int accX, accY, accZ, accTot;
     short signed int temp;
 };
 struct GyroscopeCalibration { // Data for calibration
-    long int x;
-    long int y;
-    long int z;
+    long int x, y, z;
 };
 struct Angle { // General angle
-    float pitch;
-    float roll;
+    float pitch, roll;
 };
 struct AngleBuffer { // Angle buffer
-    short signed int pitch;
-    short signed int roll;
+    short signed int pitch, roll;
 };
 
 //Declaring Leds const
