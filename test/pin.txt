@@ -1,0 +1,23 @@
+Giroscopio
+	A5 -> SCL
+	A4 -> SDA
+	+ -> 3.3V
+	- -> GND
+Buzzer
+	+ -> Pin 8
+	- -> GND
+Fotoresistenza
+	○ +
+	| fotoresistenza
+	○----> A0
+	| 5600 Ohm
+	○ -
+Striscia led
+	+ -> 5V
+	- -> GND
+	data -> Pin 9
+
+Provare:
+* collegare lo shield alla breadboard
+  e connettere soltanto il giroscopio
+* collegare un giroscopio nuovo

@@ -25,9 +25,9 @@ struct Settings {
     float pitchCorrection, rollCorrection;
     short unsigned int xLenght, yLenght;
 };
-
-Settings readSettings();
-String readDataFromSD(String fileName);
+struct AngleError {
+    short signed int a0, a1, a2, a3;
+};
 
 GyroscopeData read_mpu_6050_data() { // Subroutine for reading the raw gyro and accelerometer data
     GyroscopeData data;
@@ -130,34 +130,4 @@ float getOffsetX(int angleX) {
 
 float getOffsetY(int angleY) {
     return float(sin(double(angleY)) * (85.5 / 2));
-}
-
-Settings readSettings() { // Reads the settings from various files in the SD card
-    Settings settings;
-    settings.ledStringPin = readDataFromSD("lpin.txt").toInt();
-    settings.ledsNumber = readDataFromSD("ledn.txt").toInt();
-    settings.photoresistorPin = readDataFromSD("ppin.txt").toInt() + A0;
-    settings.buzzerPin = readDataFromSD("bpin.txt").toInt();
-    settings.xInclinationTollerance = readDataFromSD("xint.txt").toInt();
-    settings.yInclinationTollerance = readDataFromSD("yint.txt").toInt();
-    settings.propBrightness = readDataFromSD("lbad.txt").toInt();
-    settings.pitchCorrection = readDataFromSD("acpi.txt").toFloat() / 10;
-    settings.rollCorrection = readDataFromSD("acro.txt").toFloat() / 10;
-    settings.xLenght = readDataFromSD("xlen.txt").toInt();
-    settings.yLenght = readDataFromSD("ylen.txt").toInt();
-    return settings;
-}
-
-String readDataFromSD(String fileName) { // Genaral function to read the content of a file
-    String data;
-    if(SD.begin(4)) {
-        File dataFile = SD.open(fileName, FILE_READ);
-        if(dataFile) {
-            while (dataFile.available()) {
-                data = data + char(dataFile.read());
-            }
-            dataFile.close();
-        }
-    }
-    return data;
 }

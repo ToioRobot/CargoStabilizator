@@ -14,14 +14,28 @@ AngleBuffer angleBuffer;
 bool setGyroAngles;
 Angle angleAcc;
 Angle angleOutput;
-Settings settings = readSettings();
+Settings settings;
 
 //Initialize the NeoPixel library
-Adafruit_NeoPixel ledString = Adafruit_NeoPixel(settings.ledsNumber, settings.ledStringPin, NEO_RGB);
+Adafruit_NeoPixel ledString;
+void setLed(float GyX, float GyY);
+/* Settings readSettings();
+String readDataFromSD(String fileName); */
 
 void setup() {
-    Wire.begin(); // Start I2C as master
     Serial.begin(9600);
+    settings.ledStringPin = 9;
+    settings.ledsNumber = 4;
+    settings.photoresistorPin = A0;
+    settings.buzzerPin = 8;
+    settings.xInclinationTollerance = 3;
+    settings.yInclinationTollerance = 2;
+    settings.propBrightness = 4;
+    settings.pitchCorrection = 0.0;
+    settings.rollCorrection = 0.0;
+    settings.xLenght = 42;
+    settings.yLenght = 82;
+    Serial.println("Entered setup()...");
     Serial.println("Settings from SD:"); // Print all settings for debug
     Serial.print("Led String Pin: "); Serial.println(settings.ledStringPin);
     Serial.print("Leds Number: "); Serial.println(settings.ledsNumber);
@@ -34,6 +48,8 @@ void setup() {
     Serial.print("Roll Correction: "); Serial.println(settings.rollCorrection);
     Serial.print("X Lenght: "); Serial.println(settings.xLenght);
     Serial.print("Y Lenght: "); Serial.println(settings.yLenght);
+    ledString = Adafruit_NeoPixel(settings.ledsNumber, settings.ledStringPin, NEO_RGB);
+    Wire.begin(); // Start I2C as master
     pinMode(13, OUTPUT);
     pinMode(settings.buzzerPin, OUTPUT);
     Serial.println("Preparing the gyroscope...");
@@ -208,3 +224,33 @@ void setLed(float GyX, float GyY) {
     }
     ledString.show();
 }
+
+/* Settings readSettings() { // Reads the settings from various files in the SD card
+    Settings settings;
+    settings.ledStringPin = readDataFromSD("lpin.txt").toInt();
+    settings.ledsNumber = readDataFromSD("ledn.txt").toInt();
+    settings.photoresistorPin = readDataFromSD("ppin.txt").toInt() + A0;
+    settings.buzzerPin = readDataFromSD("bpin.txt").toInt();
+    settings.xInclinationTollerance = readDataFromSD("xint.txt").toInt();
+    settings.yInclinationTollerance = readDataFromSD("yint.txt").toInt();
+    settings.propBrightness = readDataFromSD("lbad.txt").toInt();
+    settings.pitchCorrection = readDataFromSD("acpi.txt").toFloat() / 10;
+    settings.rollCorrection = readDataFromSD("acro.txt").toFloat() / 10;
+    settings.xLenght = readDataFromSD("xlen.txt").toInt();
+    settings.yLenght = readDataFromSD("ylen.txt").toInt();
+    return settings;
+}
+
+String readDataFromSD(String fileName) { // Genaral function to read the content of a file
+    String data;
+    if(SD.begin(4)) {
+        File dataFile = SD.open(fileName, FILE_READ);
+        if(dataFile) {
+            while (dataFile.available()) {
+                data = data + char(dataFile.read());
+            }
+            dataFile.close();
+        }
+    }
+    return data;
+} */
