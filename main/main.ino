@@ -22,7 +22,7 @@ Adafruit_NeoPixel ledString = Adafruit_NeoPixel(settings.ledsNumber, settings.le
 void setup() {
     Wire.begin(); // Start I2C as master
     Serial.begin(9600);
-    Serial.println("Settings from SD:");
+    Serial.println("Settings from SD:"); // Print all settings for debug
     Serial.print("Led String Pin: "); Serial.println(settings.ledStringPin);
     Serial.print("Leds Number: "); Serial.println(settings.ledsNumber);
     Serial.print("Photoresistor Pin: "); Serial.println(settings.photoresistorPin);
@@ -32,7 +32,8 @@ void setup() {
     Serial.print("Proportional Brightness: "); Serial.println(settings.propBrightness);
     Serial.print("Pitch Correction: "); Serial.println(settings.pitchCorrection);
     Serial.print("Roll Correction: "); Serial.println(settings.rollCorrection);
-    //Serial.begin(9600); // Use only for debugging
+    Serial.print("X Lenght: "); Serial.println(settings.xLenght);
+    Serial.print("Y Lenght: "); Serial.println(settings.yLenght);
     pinMode(13, OUTPUT);
     pinMode(settings.buzzerPin, OUTPUT);
     Serial.println("Preparing the gyroscope...");

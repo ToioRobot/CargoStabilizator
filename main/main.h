@@ -23,6 +23,7 @@ struct Settings {
     short unsigned int ledStringPin, ledsNumber, photoresistorPin, buzzerPin;
     short unsigned int xInclinationTollerance, yInclinationTollerance, propBrightness;
     float pitchCorrection, rollCorrection;
+    short unsigned int xLenght, yLenght;
 };
 
 Settings readSettings();
@@ -142,6 +143,8 @@ Settings readSettings() { // Reads the settings from various files in the SD car
     settings.propBrightness = readDataFromSD("lbad.txt").toInt();
     settings.pitchCorrection = readDataFromSD("acpi.txt").toFloat() / 10;
     settings.rollCorrection = readDataFromSD("acro.txt").toFloat() / 10;
+    settings.xLenght = readDataFromSD("xlen.txt").toInt();
+    settings.yLenght = readDataFromSD("ylen.txt").toInt();
     return settings;
 }
 
