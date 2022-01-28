@@ -590,7 +590,7 @@
                 "/usr/share/arduino/tools/**",
                 "/usr/share/arduino/hardware/**",
                 "/usr/share/arduino/**",
-                "/home/lorenzo/Arduino/**"
+                "/home/lorenzo/Arduino/libraries/**"
             ],
             "forcedInclude": [
                 "/usr/share/arduino/hardware/archlinux-arduino/avr/cores/arduino/Arduino.h"
