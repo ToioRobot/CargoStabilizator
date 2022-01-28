@@ -17,6 +17,8 @@ void loop()
   int nDevices;
  
   Serial.println("Scanning...");
+  Serial.println(analogRead(A0));
+  tone(8, 1000);
  
   nDevices = 0;
   for(address = 1; address < 127; address++ )

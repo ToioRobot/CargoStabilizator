@@ -63,8 +63,10 @@ void setup() {
     lcd.setCursor(0,0); lcd.print("Calibrating gyro"); lcd.setCursor(0,1); tone(settings.buzzerPin, 1000);
     delay(500); noTone(settings.buzzerPin);
     ledString.begin(); // Begin ledString.
-    ledString.setBrightness(analogRead(settings.photoresistorPin)/settings.propBrightness); //Reading enviroinmental light
-    Serial.print("Photoresistor reading/propBrightness: "); Serial.println(analogRead(settings.photoresistorPin)/settings.propBrightness);
+    //ledString.setBrightness(analogRead(settings.photoresistorPin)/settings.propBrightness); //Reading enviroinmental light
+    ledString.setBrightness(1024/settings.propBrightness); //Reading enviroinmental light
+    //Serial.print("Photoresistor reading/propBrightness: "); Serial.println(analogRead(settings.photoresistorPin)/settings.propBrightness);
+    Serial.print("Photoresistor reading/propBrightness: "); Serial.println(1024/settings.propBrightness);
     for(uint8_t i = 0; i < settings.ledsNumber; i++) {
         Serial.print("Turning white led n."); Serial.print(i); Serial.println("...");
         ledString.setPixelColor(i, ledString.Color(255, 255, 255));
@@ -104,8 +106,10 @@ void setup() {
 }
 
 void loop(){
-    ledString.setBrightness(analogRead(settings.photoresistorPin)/settings.propBrightness); //Reading enviroinmental light
-    Serial.print("Photoresitor reading/propBrightness: "); Serial.println(analogRead(settings.photoresistorPin)/settings.propBrightness);
+    //ledString.setBrightness(analogRead(settings.photoresistorPin)/settings.propBrightness); //Reading enviroinmental light
+    ledString.setBrightness(1024/settings.propBrightness); //Reading enviroinmental light
+    //Serial.print("Photoresitor reading/propBrightness: "); Serial.println(analogRead(settings.photoresistorPin)/settings.propBrightness);
+    Serial.print("Photoresitor reading/propBrightness: "); Serial.println(1024/settings.propBrightness);
 
     Serial.println("Preparing to read data from gyroscope...");
     data = read_mpu_6050_data(); // Read the raw acc and gyro data from the MPU-6050

@@ -16,8 +16,3 @@ Striscia led
 	+ -> 5V
 	- -> GND
 	data -> Pin 9
-
-Provare:
-* collegare lo shield alla breadboard
-  e connettere soltanto il giroscopio
-* collegare un giroscopio nuovo
