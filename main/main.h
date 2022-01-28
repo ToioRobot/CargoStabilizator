@@ -19,12 +19,6 @@ struct Angle { // General angle
 struct AngleBuffer { // Angle buffer
     short signed int pitch, roll;
 };
-struct Settings {
-    short unsigned int ledStringPin, ledsNumber, photoresistorPin, buzzerPin;
-    short unsigned int xInclinationTollerance, yInclinationTollerance, propBrightness;
-    float pitchCorrection, rollCorrection;
-    short unsigned int xLenght, yLenght;
-};
 struct AngleError {
     short signed int a0, a1, a2, a3;
 };

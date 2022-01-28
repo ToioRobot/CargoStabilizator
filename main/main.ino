@@ -4,6 +4,9 @@
 #include <Adafruit_NeoPixel.h>
 #include "main.h"
 
+#define INCL_TOLL_X 3
+#define INCL_TOLL_Y 2
+
 //Declaring some global variables
 GyroscopeData data;
 GyroscopeCalibration calibrationData;
@@ -14,44 +17,43 @@ AngleBuffer angleBuffer;
 bool setGyroAngles;
 Angle angleAcc;
 Angle angleOutput;
-Settings settings;
 
 //Initialize the NeoPixel library
-Adafruit_NeoPixel ledString;
+Adafruit_NeoPixel ledString = Adafruit_NeoPixel(4, 9, NEO_RGB);
 void setLed(float GyX, float GyY);
 /* Settings readSettings();
 String readDataFromSD(String fileName); */
 
 void setup() {
     Serial.begin(9600);
-    settings.ledStringPin = 9;
-    settings.ledsNumber = 4;
-    settings.photoresistorPin = A0;
-    settings.buzzerPin = 8;
-    settings.xInclinationTollerance = 3;
-    settings.yInclinationTollerance = 2;
-    settings.propBrightness = 4;
-    settings.pitchCorrection = 0.0;
-    settings.rollCorrection = 0.0;
-    settings.xLenght = 42;
-    settings.yLenght = 82;
-    Serial.println("Entered setup()...");
-    Serial.println("Settings from SD:"); // Print all settings for debug
-    Serial.print("Led String Pin: "); Serial.println(settings.ledStringPin);
-    Serial.print("Leds Number: "); Serial.println(settings.ledsNumber);
-    Serial.print("Photoresistor Pin: "); Serial.println(settings.photoresistorPin);
-    Serial.print("Buzzer Pin: "); Serial.println(settings.buzzerPin);
-    Serial.print("X Inclination Tollerance: "); Serial.println(settings.xInclinationTollerance);
-    Serial.print("Y Inclination Tollerance: "); Serial.println(settings.yInclinationTollerance);
-    Serial.print("Proportional Brightness: "); Serial.println(settings.propBrightness);
-    Serial.print("Pitch Correction: "); Serial.println(settings.pitchCorrection);
-    Serial.print("Roll Correction: "); Serial.println(settings.rollCorrection);
-    Serial.print("X Lenght: "); Serial.println(settings.xLenght);
-    Serial.print("Y Lenght: "); Serial.println(settings.yLenght);
-    ledString = Adafruit_NeoPixel(settings.ledsNumber, settings.ledStringPin, NEO_RGB);
+    //settings.ledStringPin = 9;
+    //4 = 4;
+    //settings.photoresistorPin = A0;
+    //settings.buzzerPin = 8;
+    //INCL_TOLL_X = 3;
+    //INCL_TOLL_Y = 2;
+    //settings.propBrightness = 4;
+    //settings.pitchCorrection = 0.0;
+    //settings.rollCorrection = 0.0;
+    //settings.xLenght = 42;
+    //settings.yLenght = 82;
+    //Serial.println("Entered setup()...");
+    //Serial.println("Settings from SD:"); // Print all settings for debug
+    //Serial.print("Led String Pin: "); Serial.println(settings.ledStringPin);
+    //Serial.print("Leds Number: "); Serial.println(4);
+    //Serial.print("Photoresistor Pin: "); Serial.println(settings.photoresistorPin);
+    //Serial.print("Buzzer Pin: "); Serial.println(settings.buzzerPin);
+    //Serial.print("X Inclination Tollerance: "); Serial.println(INCL_TOLL_X);
+    //Serial.print("Y Inclination Tollerance: "); Serial.println(INCL_TOLL_Y);
+    //Serial.print("Proportional Brightness: "); Serial.println(settings.propBrightness);
+    //Serial.print("Pitch Correction: "); Serial.println(settings.pitchCorrection);
+    //Serial.print("Roll Correction: "); Serial.println(settings.rollCorrection);
+    //Serial.print("X Lenght: "); Serial.println(settings.xLenght);
+    //Serial.print("Y Lenght: "); Serial.println(settings.yLenght);
+    
     Wire.begin(); // Start I2C as master
     pinMode(13, OUTPUT);
-    pinMode(settings.buzzerPin, OUTPUT);
+    //pinMode(settings.buzzerPin, OUTPUT);
     Serial.println("Preparing the gyroscope...");
     setup_mpu_6050_registers(); // Setup the registers of the MPU-6050 and start the gyro
     Serial.println("Gyroscope is ready for calibration...");
@@ -60,14 +62,14 @@ void setup() {
     lcd.print("     V1.2"); delay(500); lcd.clear();
     
     // Begin calibration
-    lcd.setCursor(0,0); lcd.print("Calibrating gyro"); lcd.setCursor(0,1); tone(settings.buzzerPin, 1000);
-    delay(500); noTone(settings.buzzerPin);
+    lcd.setCursor(0,0); lcd.print("Calibrating gyro"); lcd.setCursor(0,1);// tone(settings.buzzerPin, 1000);
+    delay(500); //noTone(settings.buzzerPin);
     ledString.begin(); // Begin ledString.
     //ledString.setBrightness(analogRead(settings.photoresistorPin)/settings.propBrightness); //Reading enviroinmental light
-    ledString.setBrightness(1024/settings.propBrightness); //Reading enviroinmental light
+    ledString.setBrightness(255); //Reading enviroinmental light
     //Serial.print("Photoresistor reading/propBrightness: "); Serial.println(analogRead(settings.photoresistorPin)/settings.propBrightness);
-    Serial.print("Photoresistor reading/propBrightness: "); Serial.println(1024/settings.propBrightness);
-    for(uint8_t i = 0; i < settings.ledsNumber; i++) {
+    //Serial.print("Photoresistor reading/propBrightness: "); Serial.println(1024/settings.propBrightness);
+    for(uint8_t i = 0; i < 4; i++) {
         Serial.print("Turning white led n."); Serial.print(i); Serial.println("...");
         ledString.setPixelColor(i, ledString.Color(255, 255, 255));
     }
@@ -97,9 +99,9 @@ void setup() {
     lcd.print("Roll :");
 
     digitalWrite(13, LOW); // All done, turn the LED off
-    tone(settings.buzzerPin, 1000);
+    //tone(settings.buzzerPin, 1000);
     delay(500);
-    noTone(settings.buzzerPin);
+    //noTone(settings.buzzerPin);
 
     loopTimer = micros(); // Reset the loop timer
     Serial.println("Exiting from setup()");
@@ -107,9 +109,9 @@ void setup() {
 
 void loop(){
     //ledString.setBrightness(analogRead(settings.photoresistorPin)/settings.propBrightness); //Reading enviroinmental light
-    ledString.setBrightness(1024/settings.propBrightness); //Reading enviroinmental light
+    ledString.setBrightness(255); //Reading enviroinmental light
     //Serial.print("Photoresitor reading/propBrightness: "); Serial.println(analogRead(settings.photoresistorPin)/settings.propBrightness);
-    Serial.print("Photoresitor reading/propBrightness: "); Serial.println(1024/settings.propBrightness);
+    //Serial.print("Photoresitor reading/propBrightness: "); Serial.println(1024/settings.propBrightness);
 
     Serial.println("Preparing to read data from gyroscope...");
     data = read_mpu_6050_data(); // Read the raw acc and gyro data from the MPU-6050
@@ -130,8 +132,8 @@ void loop(){
     angleAcc.pitch = asin((float)data.accY/data.accTot)* 57.296; // Calculate the pitch angle
     angleAcc.roll = asin((float)data.accX/data.accTot)* -57.296; // Calculate the roll angle
 
-    angleAcc.pitch -= settings.pitchCorrection; // Accelerometer calibration value for pitch
-    angleAcc.roll -= settings.rollCorrection; // Accelerometer calibration value for roll
+    angleAcc.pitch -= 0.0; // Accelerometer calibration value for pitch
+    angleAcc.roll -= 0.0; // Accelerometer calibration value for roll
 
     if(setGyroAngles) { // If the IMU is already started
         angle.pitch = angle.pitch * 0.9996 + angleAcc.pitch * 0.0004; // Correct the drift of the gyro pitch angle with the accelerometer pitch angle
@@ -159,16 +161,16 @@ void setLed(float GyX, float GyY) {
     bool Xflat, Yflat;
     uint8_t i;
     
-    Xflat = (GyX < settings.xInclinationTollerance && GyX > (settings.xInclinationTollerance * -1)); // X and Y angles respect tollerance
-    Yflat = (GyY < settings.yInclinationTollerance && GyY > (settings.yInclinationTollerance * -1));
+    Xflat = (GyX < INCL_TOLL_X && GyX > (INCL_TOLL_X * -1)); // X and Y angles respect tollerance
+    Yflat = (GyY < INCL_TOLL_Y && GyY > (INCL_TOLL_Y * -1));
     if(Xflat && Yflat) { // flat
-        for(i = 0; i < settings.ledsNumber; i++) {
+        for(i = 0; i < 4; i++) {
             ledString.setPixelColor(i, ledString.Color(255, 0, 0));
         }
     }
     else { // not flat
         if(Xflat) { // x flat
-            if(GyY >= settings.yInclinationTollerance) { //y too much
+            if(GyY >= INCL_TOLL_Y) { //y too much
                 ledString.setPixelColor(0, ledString.Color(0, 255, 0));
                 ledString.setPixelColor(1, ledString.Color(0, 255, 0));
                 ledString.setPixelColor(2, ledString.Color(0, 0, 255));
@@ -182,7 +184,7 @@ void setLed(float GyX, float GyY) {
             }
         }
         else if(Yflat) { // y flat
-            if(GyX >= settings.xInclinationTollerance) { //x too much
+            if(GyX >= INCL_TOLL_X) { //x too much
                 ledString.setPixelColor(0, ledString.Color(0, 0, 255));
                 ledString.setPixelColor(1, ledString.Color(0, 255, 0));
                 ledString.setPixelColor(2, ledString.Color(0, 255, 0));
@@ -196,8 +198,8 @@ void setLed(float GyX, float GyY) {
             }
         }
         else {
-            if(GyX >= settings.xInclinationTollerance) { // x too much
-                if(GyY >= settings.yInclinationTollerance) { // y too much
+            if(GyX >= INCL_TOLL_X) { // x too much
+                if(GyY >= INCL_TOLL_Y) { // y too much
                     ledString.setPixelColor(0, ledString.Color(255, 0, 0));
                     ledString.setPixelColor(1, ledString.Color(0, 255, 0));
                     ledString.setPixelColor(2, ledString.Color(255, 0, 0));
@@ -211,7 +213,7 @@ void setLed(float GyX, float GyY) {
                 }
             }
             else { // x too less
-                if(GyY >= settings.yInclinationTollerance) { //y too much
+                if(GyY >= INCL_TOLL_Y) { //y too much
                     ledString.setPixelColor(0, ledString.Color(0, 255, 0));
                     ledString.setPixelColor(1, ledString.Color(255, 0, 0));
                     ledString.setPixelColor(2, ledString.Color(0, 0, 255));
@@ -232,11 +234,11 @@ void setLed(float GyX, float GyY) {
 /* Settings readSettings() { // Reads the settings from various files in the SD card
     Settings settings;
     settings.ledStringPin = readDataFromSD("lpin.txt").toInt();
-    settings.ledsNumber = readDataFromSD("ledn.txt").toInt();
+    4 = readDataFromSD("ledn.txt").toInt();
     settings.photoresistorPin = readDataFromSD("ppin.txt").toInt() + A0;
     settings.buzzerPin = readDataFromSD("bpin.txt").toInt();
-    settings.xInclinationTollerance = readDataFromSD("xint.txt").toInt();
-    settings.yInclinationTollerance = readDataFromSD("yint.txt").toInt();
+    INCL_TOLL_X = readDataFromSD("xint.txt").toInt();
+    INCL_TOLL_Y = readDataFromSD("yint.txt").toInt();
     settings.propBrightness = readDataFromSD("lbad.txt").toInt();
     settings.pitchCorrection = readDataFromSD("acpi.txt").toFloat() / 10;
     settings.rollCorrection = readDataFromSD("acro.txt").toFloat() / 10;
