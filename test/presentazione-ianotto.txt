@@ -1,0 +1,9 @@
+Il cervello del nostro CargoStabilizator è un microcontrollore Arduino Uno (è stato scelto per la sua compattezza, versatilità e per il suo basso consumo);
+esso comunico attraverso un'interfaccia i2c con il giroscopio e l'accelerometro per conoscere l'inclinazione del piano rispetto alla posizione di calibrazione.
+
+Tutti i componenti, tranne i LED, sono stagnati su di una scheda d'espansione; abbiamo scelto questa perché ci permette in primis di stagnare tutti i collegamenti e, in secundis, di utilizzare una scheda SD per inserire le configurazioni del software.
+
+Tra i componenti secondari troviamo:
+    - Un buzzer per segnalare fonicamente un'inclinazione errata all'operatore;
+    - Una fotoresistenza, che inserita in un partitore di tensione permette ad Arduino di conoscere la luminosità esterna; questo dato viene poi utilizzato
+      per regolare l'intensità luminosa dei LED in base alla luce esterna, per evitare che una luminosità non adeguata possa abbagliare l'operatore oppure, al contrario, non essere visibile perché fioca.
